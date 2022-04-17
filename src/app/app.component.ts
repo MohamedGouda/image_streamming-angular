@@ -11,13 +11,15 @@ export class AppComponent {
 
   title = 'image-streaming';
 
-  baseURL:string= 'http://localhost:8090/images/'
-  currentPhoto: string =""
+  baseURL:string='http://localhost:8090/images/'
+  currentPhoto: string = ''
 
   constructor(private socket: Socket) {
+    this.socket.emit("currentFile", (cb:any) => {
+      this.changePhoto(cb);
+    });
     this.connectToSocketAndChange()
-    this.currentPhoto = "8.png"
-  }
+  } 
 
 
   changePhoto(data:string){
@@ -25,14 +27,15 @@ export class AppComponent {
   }
 
   connectToSocketAndChange = () => {
-    this.socket.on("file_changed", (data:any) => {
-      this.changePhoto(data);
-    });
-
 
     this.socket.emit("currentFile", (cb:any) => {
       this.changePhoto(cb);
     });
+
+    this.socket.on("file_changed", (data:any) => {
+      this.changePhoto(data);
+    });
+
    
   }
 
